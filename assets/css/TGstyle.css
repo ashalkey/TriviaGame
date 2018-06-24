@@ -1,0 +1,21 @@
+h1, h3 {
+    text-align: center;
+}
+
+.centered-buttons {
+    display: flex;
+    justify-content: center;
+}
+
+.btn-group-vertical .btn {
+    margin-bottom: 10px;
+}
+.question-text {
+    text-align: center;
+}
+
+.results {
+    margin-bottom: 10px;
+    font-size: 24px;
+    font-weight: bold;
+}

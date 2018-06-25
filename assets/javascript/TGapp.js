@@ -1,38 +1,58 @@
 var correctAnswers = 0;
 var wrongAnswers = 0;
-var triviaQuestions =[
-questionOne = {
-    question : 'You can trace the origins of this martial art back to Russia',
-    answers : ['Sambo', 'Krav Maga', 'Hapkido', 'Judo'],
-    cAnswer : 'Sambo'
-},
+var triviaQuestions = [
+    questionOne = {
+        question: 'You can trace the origins of this martial art back to Russia',
+        answers: ['Sambo', 'Karakucak', 'Hapkido', 'Judo'],
+        cAnswer: 'Sambo',
+        gif: 'assets/images/Sambo.gif',
+        alt: 'Sambo gif'
+    },
 
-questionTwo = {
-    question : 'This martial art focuses on striking and employs the use of knees and elbows. Tony Jaa and Saenchai are famous practitioners.',
-    answers : ['Wing Chun', 'Karate', 'Wushu', 'Muay Thai'],
-    cAnswer : 'Muay Thai'
-},
-questionThree = {
-    question : 'This martial art focuses on grappling and has origins in Japan.  It was popularized by the Gracie family.',
-    answers : ['Hapkido', 'Sumo', 'Brazilian Jiu-Jitsu', 'Wrestling'],
-    cAnswer : 'Brazilian Jiu-Jitsu'
-},
-questionFour = {
-    question : 'With origins in China, this martial art was practiced by the stars of Enter the Dragon and Ip Man',
-    answers : ['Aikido', 'Wing Chun', 'Tang Soo Do', 'Jeet Kune Do'],
-    cAnswer : 'Wing Chun'
-},
-questionFive = {
-    question : 'The most popular martial art in Korea is known for its kicking techniques.  Joe Rogan is a famous American practitioner',
-    answers : ['Kendo', 'Taekwondo', 'Tai Chi', 'Baguazhang'],
-    cAnswer : 'Taekwondo'
-}
+    questionTwo = {
+        question: 'This martial art focuses on striking and employs the use of knees and elbows. Tony Jaa and Saenchai are famous practitioners.',
+        answers: ['Vovinam', 'Karate', 'Wushu', 'Muay Thai'],
+        cAnswer: 'Muay Thai',
+        gif: 'assets/images/Muay-Thai.gif',
+        alt: 'Muay Thai'
+    },
+    questionThree = {
+        question: 'This martial art focuses on grappling and has origins in Japan.  It was popularized by the Gracie family.',
+        answers: ['Hwa Rang Do', 'Sumo', 'Brazilian Jiu-Jitsu', 'Wrestling'],
+        cAnswer: 'Brazilian Jiu-Jitsu',
+        gif: 'assets/images/Brazilian-Jiu-Jitsu.gif',
+        alt: 'Brazilian Jiu-Jitsu Omoplata'
+    },
+    questionFour = {
+        question: 'With origins in China, this martial art was practiced by the stars of Enter the Dragon and Ip Man.',
+        answers: ['Aikido', 'Wing Chun', 'Tang Soo Do', 'Jeet Kune Do'],
+        cAnswer: 'Wing Chun',
+        gif: 'assets/images/Wing-Chun.gif',
+        alt: 'Wing-Chun'
+    },
+    questionFive = {
+        question: 'The most popular martial art in Korea is known for its kicking techniques.  Joe Rogan is a famous American practitioner.',
+        answers: ['Kendo', 'Taekwondo', 'Tai Chi', 'Baguazhang'],
+        cAnswer: 'Taekwondo',
+        gif: 'assets/images/Taekwando.gif',
+        alt: 'Taekwando Knockout'
+    },
+    questionSix = {
+        question: 'This martial art has origins in Isreal and was derived from a combination boxing, wrestling, aikido, judo, and karate.',
+        answers: [ 'Lethwei', 'GongKwon Yusul', 'Kuntao', 'Krav Maga'],
+        cAnswer: 'Krav Maga',
+        gif: 'assets/images/Krav-Maga.gif',
+        alt: 'Krav Maga Disarm'
+    }
 ];
 
 var questionNum = 1;
 var intervalId;
+var tenIntervalId;
 var timesUp = false;
 var answered = false;
+
+var gifContainer = $('<div>').addClass('col-md-6 offset-md-3 gif-container');
 
 var timer = {
     time: 30,
@@ -51,6 +71,12 @@ var timer = {
         clearInterval(intervalId);
         timer.time = 30;
         $('#timer').text('Time remaining: ' + timer.time);
+    },
+    countdownTen: function () {
+        tenIntervalId = setTimeout(timeOutNextQuestion, 10000);
+    },
+    countdownTenClear: function(){
+        clearTimeout(tenIntervalId);
     }
 };
 
@@ -60,7 +86,9 @@ $('#start-button').click(function () {
 });
 
 function startGame() {
+    $('.img-fluid').remove();
     $('.display-4').text('Question #' + questionNum);
+    timer.reset();
     $('#timer').text('Time remaining: ' + timer.time);
     timer.start();
     var tQuestionContainer = $('<div>').addClass('col-md-6 offset-md-3 question-text');
@@ -73,7 +101,7 @@ function startGame() {
     createAnswerButtons();
 }
 
-function createAnswerButtons(){
+function createAnswerButtons() {
     for (var i = 0; i < 4; i++) {
         var answerButton = $('<button>').addClass('btn btn-warning btn-lg answer');
         answerButton.text(triviaQuestions[questionNum - 1].answers[i]);
@@ -81,55 +109,84 @@ function createAnswerButtons(){
             answerButton.attr('id', 'cAnswer');
         }
         else {
-            answerButton.attr('id', 'wAnswer');
+            answerButton.addClass('wAnswer');
         }
         answerButton.appendTo('.btn-group-vertical');
     }
     $('#cAnswer').click(clickedCorrectAnswer);
-    $('#wAnswer').click(clickedWrongAnswer);
+    $('.wAnswer').click(clickedWrongAnswer);
 }
 
 function nextQuestion() {
     $(this).remove();
+    $('.img-fluid').remove();
+    timer.countdownTenClear();
     if (questionNum === triviaQuestions.length) {
         showResults();
     }
     else {
-    questionNum++;
-    $('.display-4').text('Question #' + questionNum);
-    $('#p-question-text').text(triviaQuestions[questionNum - 1].question);
-    createAnswerButtons();
-    $('#timer').text('Time remaining: ' + timer.time);
-    timer.start();
+        questionNum++;
+        $('.display-4').text('Question #' + questionNum);
+        $('#p-question-text').text(triviaQuestions[questionNum - 1].question);
+        createAnswerButtons();
+        timer.reset();
+        $('#timer').text('Time remaining: ' + timer.time);
+        timer.start();
     }
 }
 
-function outOfTime () {
+function timeOutNextQuestion() {
+    $('.next-question').remove()
+    $('.img-fluid').remove();
+    timer.countdownTenClear();
+    if (questionNum === triviaQuestions.length) {
+        showResults();
+    }
+    else {
+        questionNum++;
+        $('.display-4').text('Question #' + questionNum);
+        $('#p-question-text').text(triviaQuestions[questionNum - 1].question);
+        createAnswerButtons();
+        timer.reset();
+        $('#timer').text('Time remaining: ' + timer.time);
+        timer.start();
+    }
+}
+
+function outOfTime() {
     wrongAnswers++;
     timer.reset();
     $('#timer').empty();
     $('.answer').remove();
     $('#p-question-text').text('You are out of time! The correct answer is ' + triviaQuestions[questionNum - 1].cAnswer);
+    attachGif();
     createNextQuestionButton();
+    timer.countdownTen();
 }
 
 function clickedCorrectAnswer() {
     correctAnswers++;
     timer.reset();
+    timer.countdownTenClear();
     $('#timer').empty();
     $('.answer').remove();
     $('#p-question-text').text(triviaQuestions[questionNum - 1].cAnswer + " is correct!");
+    attachGif();
     createNextQuestionButton();
+    timer.countdownTen();
 }
 
-function clickedWrongAnswer () {
+function clickedWrongAnswer() {
     wrongAnswers++;
     timer.reset();
+    timer.countdownTenClear();
     $('#timer').empty();
     var answerText = $(this).text();
     $('.answer').remove();
     $('#p-question-text').text(answerText + " is incorrect! The correct answer was " + triviaQuestions[questionNum - 1].cAnswer);
+    attachGif();
     createNextQuestionButton();
+    timer.countdownTen();
 }
 
 function showResults() {
@@ -150,7 +207,16 @@ function createNextQuestionButton() {
     $('.next-question').click(window.nextQuestion);
 }
 
-function resetGame(){
+function attachGif() {
+    var gif = $('<img>').attr({
+        'class': 'img-fluid mx-auto',
+        'src': triviaQuestions[questionNum -1].gif,
+        'alt': triviaQuestions[questionNum -1].alt
+    })
+    gifContainer.appendTo('.result-container');
+    gif.appendTo('.gif-container');
+}
+function resetGame() {
     $(this).remove();
     $('.results').remove();
     questionNum = 1;
